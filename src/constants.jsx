@@ -1,9 +1,10 @@
-import {Slash, Square, Circle} from 'lucide-react';
+import {Slash, Square, Circle, MoveRight} from 'lucide-react';
 
 const TOOL_ITEMS = {
     Line: Slash,
     Box: Square,
     Circle: Circle,
+    ARROW: MoveRight,
 };
 
 export const TOOL_ACTIONS_TYPES = {
@@ -17,5 +18,7 @@ export const BOARD_ACTIONS = {
     DRAW_MOVE: 'DRAW_MOVE',
     DRAW_UP: 'DRAW_UP',
 }
+
+export const ARROW_HEAD_LENGTH = 20;
 
 export default TOOL_ITEMS;

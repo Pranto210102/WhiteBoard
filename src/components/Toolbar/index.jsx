@@ -31,6 +31,13 @@ const Toolbar = () => {
                     <TOOL_ITEMS.Circle size={24} />
                </div>
 
+               <div className ={cx(classes.toolItem, {
+                [classes.active]: activeTool === TOOL_ITEMS.ARROW
+                   })} onClick={() => handleToolItemClick(TOOL_ITEMS.ARROW)}>
+
+                    <TOOL_ITEMS.ARROW size={24} />
+               </div>
+
             </div>
         </>
     )
