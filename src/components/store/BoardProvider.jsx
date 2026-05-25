@@ -3,9 +3,7 @@ import React from 'react'
 import { useState, useReducer, useContext } from "react";
 import TOOL_ITEMS, { BOARD_ACTIONS, TOOL_ACTIONS_TYPES} from "../../constants";
 
-import rough from 'roughjs/bin/rough';
-
-const gen = rough.generator();
+import { createRoughElement } from "../utlis/elements.jsx";
 
 
 const boardReducer = (state, action) => {
@@ -18,17 +16,20 @@ const boardReducer = (state, action) => {
         }
         case BOARD_ACTIONS.DRAW_DONE: {
             const { clientX, clientY } = action.payload;
-            const newElement = {
-                id:state.elements.length,
-                x1: clientX,
-                y1: clientY,
-                x2: clientX,
-                y2: clientY,
-                roughElement: gen.line(clientX, clientY, clientX, clientY)
-            }
+            const newElement = createRoughElement(
+                state.elements.length,
+                clientX,
+                clientY,
+                clientX,
+                clientY,
+                { type: state.activeTool }
+            );
+
+            const previousElement = state.elements;
+            
             return {
                 ...state,
-                elements: [...state.elements, newElement],
+                elements: [...previousElement, newElement],
                 lastCoordinates: { clientX, clientY },
                 toolActionsTypes: TOOL_ACTIONS_TYPES.DRAWING,
             };
@@ -36,12 +37,27 @@ const boardReducer = (state, action) => {
 
             case BOARD_ACTIONS.DRAW_MOVE: { 
                 const { clientX, clientY } = action.payload;
-                const lastElement = state.elements[state.elements.length - 1];
-                if(!lastElement) return state;
-                lastElement.roughElement = gen.line(lastElement.x1, lastElement.y1, clientX, clientY);
+                const newElements = [...state.elements];
+
+                const index = state.elements.length - 1;
+                const {x1, y1} = newElements[index];
+
+                const newElement = createRoughElement(
+                    index,
+                    x1,
+                    y1,
+                    clientX,
+                    clientY,
+                    { type: state.activeTool }
+                );
+
+                newElements[index] = newElement;
+
+
+
                 return {
                     ...state,
-                    elements: [...state.elements],
+                    elements: newElements,
                     lastCoordinates: { clientX, clientY },
                     toolActionsTypes: TOOL_ACTIONS_TYPES.DRAWING,
                 };
@@ -49,16 +65,9 @@ const boardReducer = (state, action) => {
 
             case BOARD_ACTIONS.DRAW_UP: {
                 return {
-                    ...state,   
-                    toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
-                    lastCoordinates: null,
-                }
-            }
-
-            case BOARD_ACTIONS.DRAW_UP: {
-                return {
                     ...state,
                     toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
+                    lastCoordinates: null,
                 }
             }
             
