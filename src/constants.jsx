@@ -1,8 +1,9 @@
-import {Slash, Square} from 'lucide-react';
+import {Slash, Square, Circle} from 'lucide-react';
 
 const TOOL_ITEMS = {
     Line: Slash,
-    Box: Square
+    Box: Square,
+    Circle: Circle,
 };
 
 export const TOOL_ACTIONS_TYPES = {

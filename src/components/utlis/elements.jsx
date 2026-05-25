@@ -22,6 +22,14 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type}) => {
         case TOOL_ITEMS.Box:
             element.roughElement = gen.rectangle(x1, y1, x2 - x1, y2 - y1, options);
             break;
+        case TOOL_ITEMS.Circle: {
+            const cx = (x1 + x2) / 2;
+            const cy = (y1 + y2) / 2;
+            const width = x2 - x1;
+            const height = y2 - y1;
+            element.roughElement = gen.ellipse(cx, cy, width, height, options);
+            break;
+        }
         default:
             throw new Error('Type not recognized: ');
     }
