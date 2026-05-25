@@ -1,10 +1,11 @@
-import {Slash, Square, Circle, MoveRight} from 'lucide-react';
+import {Slash, Square, Circle, MoveRight, Brush} from 'lucide-react';
 
 const TOOL_ITEMS = {
     Line: Slash,
     Box: Square,
     Circle: Circle,
     ARROW: MoveRight,
+    BRUSH: Brush,
 };
 
 export const TOOL_ACTIONS_TYPES = {
@@ -41,6 +42,7 @@ export const STROKE_TOOL_TYPES = [
     TOOL_ITEMS.ARROW,
     TOOL_ITEMS.Box,
     TOOL_ITEMS.Circle,
+    TOOL_ITEMS.BRUSH,
 ];
 
 export const STROKE_TOOL_SIZE = [

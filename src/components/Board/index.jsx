@@ -1,7 +1,9 @@
-import React, {useRef, useEffect, useLayoutEffect, useContext} from 'react'
+import React, {useRef, useEffect, useLayoutEffect} from 'react'
 import rough from 'roughjs';
+import { useContext } from 'react';
 import BoardContext from '../store/board-context';
 import toolboxContext from '../store/toolbox-context';
+import TOOL_ITEMS from '../../constants';
 
 const Board = () => {
     const canvasRef = useRef(null);
@@ -10,7 +12,6 @@ const Board = () => {
         boardMouseMoveEventHandler, 
         boardMouseUpEventHandler,
         toolActionsTypes} = useContext(BoardContext);
-
     const { toolboxState } = useContext(toolboxContext);
 
     useEffect(() => {
@@ -32,7 +33,21 @@ const Board = () => {
         context.save();
 
             elements.forEach(element => {
-                roughCanvas.draw(element.roughElement);
+                switch(element.type) {
+                    case TOOL_ITEMS.Line:
+                    case TOOL_ITEMS.ARROW:
+                    case TOOL_ITEMS.Box:
+                    case TOOL_ITEMS.Circle:
+                        roughCanvas.draw(element.roughElement);
+                        break;
+                    case TOOL_ITEMS.BRUSH:
+                        context.fillStyle = element.stroke;
+                        context.fill(element.path);
+                        context.restore();
+                        break;
+                    default:
+                        throw new Error("Unknown element type: " + element.type);    
+                }
             })
 
         return () => {
@@ -40,7 +55,6 @@ const Board = () => {
         }
 
     }, [elements])
-
     const handleMouseDownEvent = (event) => {
         const {clientX, clientY} = event;
         console.log(clientX, clientY);
@@ -48,7 +62,7 @@ const Board = () => {
         boardMouseDownEventHandler(clientX, clientY, toolboxState);
     }
 
-    const handleMouseMoveEvent = (event) => {
+    const handleMouseMoveEvent = (event, ) => {
         if(toolActionsTypes !== "DRAWING") return;
 
         const {clientX, clientY} = event;

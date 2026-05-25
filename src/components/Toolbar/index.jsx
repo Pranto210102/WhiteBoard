@@ -10,6 +10,13 @@ const Toolbar = () => {
     return (
         <>
             <div className={classes.container}>
+                <div className ={cx(classes.toolItem, {
+                [classes.active]: activeTool === TOOL_ITEMS.BRUSH
+                   })} onClick={() => handleToolItemClick(TOOL_ITEMS.BRUSH)}>
+
+                    <TOOL_ITEMS.BRUSH size={24} />
+               </div>
+               
                <div className ={cx(classes.toolItem, {
                 [classes.active]: activeTool === TOOL_ITEMS.Line
                   })} onClick={() => handleToolItemClick(TOOL_ITEMS.Line)}>

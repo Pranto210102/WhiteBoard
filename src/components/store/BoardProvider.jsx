@@ -2,8 +2,9 @@ import BoardContext from "./board-context";
 import React from 'react'
 import { useState, useReducer, useContext } from "react";
 import TOOL_ITEMS, { BOARD_ACTIONS, TOOL_ACTIONS_TYPES} from "../../constants";
+import { getStroke } from 'perfect-freehand';
 
-import { createRoughElement } from "../utlis/elements.jsx";
+import { createRoughElement, getSvgPathFromStroke } from "../utlis/elements.jsx";
 
 
 const boardReducer = (state, action) => {
@@ -36,36 +37,44 @@ const boardReducer = (state, action) => {
         }
 
             case BOARD_ACTIONS.DRAW_MOVE: { 
-                    const { clientX, clientY, stroke: payloadStroke, fill: payloadFill, size: payloadSize } = action.payload;
+                    const { clientX, clientY } = action.payload;
                     const newElements = [...state.elements];
-
                     const index = state.elements.length - 1;
-                        const {x1, y1, stroke: prevStroke, fill: prevFill, size: prevSize} = newElements[index] || {};
 
-                    const stroke = payloadStroke ?? prevStroke;
-                    const fill = payloadFill ?? prevFill;
-                        const size = payloadSize ?? prevSize;
+                    const {x1, y1, stroke, fill, size, type} = newElements[index];
 
+                   switch(type) {
+                      case TOOL_ITEMS.Line:
+                      case TOOL_ITEMS.Box:
+                      case TOOL_ITEMS.Circle:
+                      case TOOL_ITEMS.ARROW:
+                        const newElement = createRoughElement(
+                            index,
+                            x1,
+                            y1,
+                            clientX,
+                            clientY,
+                            { type: state.activeTool, stroke, fill, size }
+                        );
 
-                const newElement = createRoughElement(
-                    index,
-                    x1,
-                    y1,
-                    clientX,
-                    clientY,
-                    { type: state.activeTool, stroke, fill, size }
-                );
+                        newElements[index] = newElement;
+                        return {
+                            ...state,
+                            elements: newElements,
+                            lastCoordinates: { clientX, clientY },
+                            toolActionsTypes: TOOL_ACTIONS_TYPES.DRAWING,
+                        };
 
-                newElements[index] = newElement;
-
-
-
-                return {
-                    ...state,
-                    elements: newElements,
-                    lastCoordinates: { clientX, clientY },
-                    toolActionsTypes: TOOL_ACTIONS_TYPES.DRAWING,
-                };
+                      case TOOL_ITEMS.BRUSH:
+                                                newElements[index].points.push([clientX, clientY]);
+                                                newElements[index].path = new Path2D(getSvgPathFromStroke(getStroke(newElements[index].points)));
+                        return {
+                            ...state,
+                            elements: newElements,
+                            lastCoordinates: { clientX, clientY },
+                            toolActionsTypes: TOOL_ACTIONS_TYPES.DRAWING,
+                        };  
+                   } 
             }
 
             case BOARD_ACTIONS.DRAW_UP: {
@@ -83,7 +92,7 @@ const boardReducer = (state, action) => {
 
 
 const initialBoardState = {
-    activeTool: TOOL_ITEMS.Line,
+    activeTool: TOOL_ITEMS.BRUSH,
     toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
     elements: [],
     lastCoordinates: null,

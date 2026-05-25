@@ -3,7 +3,7 @@ import {createContext} from 'react';
 export const BoardContext = createContext({
     activeTool: '',
     elements: [],
-    TOOL_ACTIONS_TYPES: "",
+    TOOL_ACTIONS_TYPES: '',
     handleToolItemClick: () => {},
     boardMouseDownEventHandler: () => {},
     boardMouseMoveEventHandler: () => {},

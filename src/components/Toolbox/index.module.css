@@ -1,7 +1,7 @@
 @reference "../../index.css";
 
 .container {
-  @apply absolute top-1/2 left-5 text-sm border border-gray-400;
+  @apply absolute top-1/2 left-5 text-sm border border-gray-400 bg-gray-100;
   transform: translateY(-50%);
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
 }
