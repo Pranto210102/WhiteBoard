@@ -17,6 +17,12 @@ function toolboxReducer(state, action) {
             return newState;
         }
 
+        case TOOLBOX_ACTIONS.CHANGE_SIZE: {
+            const newState = { ...state };
+            newState[action.payload.tool].size = action.payload.size;
+            return newState;
+        }
+
         default:
             return state;
     }
@@ -72,10 +78,21 @@ function ToolboxProvider({ children }) {
         });
     };
 
+     const changeSizeHandler = (tool, size) => {
+        dispatchToolboxAction({
+            type: TOOLBOX_ACTIONS.CHANGE_SIZE,
+            payload: {
+                tool,
+                size,
+            },
+        });
+    };
+
     return  <ToolboxContext.Provider value={{ 
         toolboxState,
          changeStroke: changeStrokeHandler, 
-         changeFillColor: changeFillColorHandler
+         changeFillColor: changeFillColorHandler,
+         changeSize: changeSizeHandler,
      }}> {children} </ToolboxContext.Provider>
 }
 

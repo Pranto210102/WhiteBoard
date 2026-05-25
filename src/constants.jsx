@@ -32,10 +32,18 @@ export const COLORS = {
 export const TOOLBOX_ACTIONS = {
     CHANGE_STROKE: 'CHANGE_STROKE',
     CHANGE_FILL: 'CHANGE_FILL',
+    CHANGE_SIZE: 'CHANGE_SIZE',
 }
 
 export const FILL_TOOL_TYPES = [TOOL_ITEMS.Box, TOOL_ITEMS.Circle];
 export const STROKE_TOOL_TYPES = [
+    TOOL_ITEMS.Line, 
+    TOOL_ITEMS.ARROW,
+    TOOL_ITEMS.Box,
+    TOOL_ITEMS.Circle,
+];
+
+export const STROKE_TOOL_SIZE = [
     TOOL_ITEMS.Line, 
     TOOL_ITEMS.ARROW,
     TOOL_ITEMS.Box,

@@ -15,14 +15,14 @@ const boardReducer = (state, action) => {
              };
         }
         case BOARD_ACTIONS.DRAW_DONE: {
-            const { clientX, clientY, stroke, fill } = action.payload;
+            const { clientX, clientY, stroke, fill, size } = action.payload;
             const newElement = createRoughElement(
                 state.elements.length,
                 clientX,
                 clientY,
                 clientX,
                 clientY,
-                { type: state.activeTool, stroke, fill }
+                { type: state.activeTool, stroke, fill, size }
             );
 
             const previousElement = state.elements;
@@ -36,14 +36,16 @@ const boardReducer = (state, action) => {
         }
 
             case BOARD_ACTIONS.DRAW_MOVE: { 
-                const { clientX, clientY, stroke: payloadStroke, fill: payloadFill } = action.payload;
+                    const { clientX, clientY, stroke: payloadStroke, fill: payloadFill, size: payloadSize } = action.payload;
                     const newElements = [...state.elements];
 
                     const index = state.elements.length - 1;
-                    const {x1, y1, stroke: prevStroke, fill: prevFill} = newElements[index] || {};
+                        const {x1, y1, stroke: prevStroke, fill: prevFill, size: prevSize} = newElements[index] || {};
 
                     const stroke = payloadStroke ?? prevStroke;
                     const fill = payloadFill ?? prevFill;
+                        const size = payloadSize ?? prevSize;
+
 
                 const newElement = createRoughElement(
                     index,
@@ -51,7 +53,7 @@ const boardReducer = (state, action) => {
                     y1,
                     clientX,
                     clientY,
-                    { type: state.activeTool, stroke, fill }
+                    { type: state.activeTool, stroke, fill, size }
                 );
 
                 newElements[index] = newElement;
@@ -98,6 +100,7 @@ function BoardProvider({ children }) {
                     clientY,
                     stroke: toolboxState[boardState.activeTool]?.stroke,
                     fill: toolboxState[boardState.activeTool]?.fill,
+                    size: toolboxState[boardState.activeTool]?.size,
                 },
             });
     }
@@ -110,6 +113,7 @@ function BoardProvider({ children }) {
                 clientY,
                 stroke: toolboxState[boardState.activeTool]?.stroke,
                 fill: toolboxState[boardState.activeTool]?.fill,
+                size: toolboxState[boardState.activeTool]?.size,
             },
         });
     }
