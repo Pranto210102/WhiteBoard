@@ -4,17 +4,27 @@ import { arrowHeadCoordinates } from "./math";
 
 const gen = rough.generator();
 
-export const createRoughElement = (id, x1, y1, x2, y2, {type}) => {
+export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill}) => {
     const element = {
         id,
         x1,
         y1,
         x2,
         y2,
+        type,
+        stroke,
+        fill,
     }
     let options = {
         seed: id + 1,
+        fillStyle: 'solid',
     };
+    if(stroke) {
+        options.stroke = stroke;
+    }
+    if(fill) {
+        options.fill = fill;
+    }
 
     switch(type) {
         case TOOL_ITEMS.Line:

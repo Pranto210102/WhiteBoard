@@ -1,26 +1,26 @@
 import React, { useContext } from 'react'
 import classes from './index.module.css';
-import { COLORS } from '../../constants';
+import { COLORS, STROKE_TOOL_TYPES, FILL_TOOL_TYPES } from '../../constants';
 import cx from 'classnames'
 import toolboxContext from '../store/toolbox-context';
 import boardContext from '../store/board-context';
 
 function Toolbox() {
     const { activeTool } = useContext(boardContext);
-    const {toolboxState, changeStroke} = useContext(toolboxContext);
+    const {toolboxState, changeStroke, changeFillColor} = useContext(toolboxContext);
     const strokeColor = toolboxState[activeTool]?.stroke;
+    const fillColor = toolboxState[activeTool]?.fill;
 
   return (
     <>
         <div className={classes.container}>
-            <div className={classes.selectOptionContainer}>
+            {STROKE_TOOL_TYPES.includes(activeTool) &&<div className={classes.selectOptionContainer}>
                 <div className={classes.toolBoxLabel}>Stroke</div>
                 <div className={classes.colorsContainer}>
                    {Object.keys(COLORS).map((k) => {
-                        return (
+                         return (
                             <div 
                             key={k} 
-
                                 className={cx(classes.colorBox, {
                                     [classes.activeColorBox]: strokeColor === COLORS[k]
                                 })}
@@ -31,7 +31,27 @@ function Toolbox() {
                         );
                     })}
                 </div>
-            </div>
+            </div>}
+
+            {FILL_TOOL_TYPES.includes(activeTool) && <div className={classes.selectOptionContainer}>
+                <div className={classes.toolBoxLabel}>Fill Color</div>
+                <div className={classes.colorsContainer}>
+                   {Object.keys(COLORS).map((k) => {
+                        return (
+                            <div 
+                            key={k} 
+                                className={cx(classes.colorBox, {
+                                    [classes.activeColorBox]: fillColor === COLORS[k]
+                                })}
+
+                            style={{ backgroundColor: COLORS[k] }}
+                            onClick={() => changeFillColor(activeTool, COLORS[k])}
+                            />
+                        );
+                    })}
+                </div>
+            </div>}
+
         </div>
     </>
   )

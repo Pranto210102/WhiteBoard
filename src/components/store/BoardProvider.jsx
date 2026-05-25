@@ -15,14 +15,14 @@ const boardReducer = (state, action) => {
              };
         }
         case BOARD_ACTIONS.DRAW_DONE: {
-            const { clientX, clientY } = action.payload;
+            const { clientX, clientY, stroke, fill } = action.payload;
             const newElement = createRoughElement(
                 state.elements.length,
                 clientX,
                 clientY,
                 clientX,
                 clientY,
-                { type: state.activeTool }
+                { type: state.activeTool, stroke, fill }
             );
 
             const previousElement = state.elements;
@@ -36,11 +36,14 @@ const boardReducer = (state, action) => {
         }
 
             case BOARD_ACTIONS.DRAW_MOVE: { 
-                const { clientX, clientY } = action.payload;
-                const newElements = [...state.elements];
+                const { clientX, clientY, stroke: payloadStroke, fill: payloadFill } = action.payload;
+                    const newElements = [...state.elements];
 
-                const index = state.elements.length - 1;
-                const {x1, y1} = newElements[index];
+                    const index = state.elements.length - 1;
+                    const {x1, y1, stroke: prevStroke, fill: prevFill} = newElements[index] || {};
+
+                    const stroke = payloadStroke ?? prevStroke;
+                    const fill = payloadFill ?? prevFill;
 
                 const newElement = createRoughElement(
                     index,
@@ -48,7 +51,7 @@ const boardReducer = (state, action) => {
                     y1,
                     clientX,
                     clientY,
-                    { type: state.activeTool }
+                    { type: state.activeTool, stroke, fill }
                 );
 
                 newElements[index] = newElement;
@@ -87,22 +90,26 @@ const initialBoardState = {
 function BoardProvider({ children }) {
     const [boardState, dispatchBoardAction] = useReducer(boardReducer, initialBoardState);
 
-    const boardMouseDownEventHandler = (clientX, clientY) => {
+    const boardMouseDownEventHandler = (clientX, clientY, toolboxState) => {
         dispatchBoardAction({ 
             type: BOARD_ACTIONS.DRAW_DONE, 
             payload: {
                     clientX,
-                    clientY
+                    clientY,
+                    stroke: toolboxState[boardState.activeTool]?.stroke,
+                    fill: toolboxState[boardState.activeTool]?.fill,
                 },
             });
     }
 
-    const boardMouseMoveEventHandler = (clientX, clientY) => {
+    const boardMouseMoveEventHandler = (clientX, clientY, toolboxState) => {
         dispatchBoardAction({ 
             type: BOARD_ACTIONS.DRAW_MOVE,
             payload: {
                 clientX,
-                clientY
+                clientY,
+                stroke: toolboxState[boardState.activeTool]?.stroke,
+                fill: toolboxState[boardState.activeTool]?.fill,
             },
         });
     }

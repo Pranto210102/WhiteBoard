@@ -29,6 +29,19 @@ export const COLORS = {
     WHITE: '#FFFFFF',
 }
 
+export const TOOLBOX_ACTIONS = {
+    CHANGE_STROKE: 'CHANGE_STROKE',
+    CHANGE_FILL: 'CHANGE_FILL',
+}
+
+export const FILL_TOOL_TYPES = [TOOL_ITEMS.Box, TOOL_ITEMS.Circle];
+export const STROKE_TOOL_TYPES = [
+    TOOL_ITEMS.Line, 
+    TOOL_ITEMS.ARROW,
+    TOOL_ITEMS.Box,
+    TOOL_ITEMS.Circle,
+];
+
 export const ARROW_HEAD_LENGTH = 20;
 
 export default TOOL_ITEMS;
