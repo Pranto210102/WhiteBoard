@@ -10,8 +10,7 @@ const Board = () => {
     const {elements, 
         boardMouseDownEventHandler, 
         boardMouseMoveEventHandler, 
-        boardMouseUpEventHandler,
-        toolActionsTypes} = useContext(BoardContext);
+        boardMouseUpEventHandler } = useContext(BoardContext);
     const { toolboxState } = useContext(toolboxContext);
 
     useEffect(() => {
@@ -57,16 +56,16 @@ const Board = () => {
     }, [elements])
     const handleMouseDownEvent = (event) => {
         const {clientX, clientY} = event;
-        console.log(clientX, clientY);
+        // console.log(clientX, clientY);
 
         boardMouseDownEventHandler(clientX, clientY, toolboxState);
     }
 
     const handleMouseMoveEvent = (event, ) => {
-        if(toolActionsTypes !== "DRAWING") return;
+        // if(toolActionsTypes !== "DRAWING") return;
 
         const {clientX, clientY} = event;
-        console.log(clientX, clientY);
+        // console.log(clientX, clientY);
 
         boardMouseMoveEventHandler(clientX, clientY, toolboxState);
     }
@@ -78,7 +77,7 @@ const Board = () => {
   return (
     <>
         <div className='w-screen h-screen bg-gray-100'>
-            <canvas
+            <canvas id='canvas'
                 ref={canvasRef}
                 className='border-4 border-gray-300 w-full h-full bg-white rounded-lg shadow-md'
              onMouseDown={handleMouseDownEvent} 

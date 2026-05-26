@@ -30,6 +30,10 @@ function toolboxReducer(state, action) {
 
 function initialState() {
     return {
+        [TOOL_ITEMS.BRUSH]: {
+            stroke: COLORS.BLACK,
+            size: 1,
+        },
         [TOOL_ITEMS.Line]: {
             stroke: COLORS.BLACK,
             size: 1,

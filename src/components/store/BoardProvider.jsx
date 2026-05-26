@@ -4,7 +4,7 @@ import { useState, useReducer, useContext } from "react";
 import TOOL_ITEMS, { BOARD_ACTIONS, TOOL_ACTIONS_TYPES} from "../../constants";
 import { getStroke } from 'perfect-freehand';
 
-import { createRoughElement, getSvgPathFromStroke } from "../utlis/elements.jsx";
+import { createRoughElement, getSvgPathFromStroke, isPointInElement } from "../utlis/elements.jsx";
 
 
 const boardReducer = (state, action) => {
@@ -66,8 +66,8 @@ const boardReducer = (state, action) => {
                         };
 
                       case TOOL_ITEMS.BRUSH:
-                                                newElements[index].points.push([clientX, clientY]);
-                                                newElements[index].path = new Path2D(getSvgPathFromStroke(getStroke(newElements[index].points)));
+                        newElements[index].points.push([clientX, clientY]);
+                        newElements[index].path = new Path2D(getSvgPathFromStroke(getStroke(newElements[index].points)));
                         return {
                             ...state,
                             elements: newElements,
@@ -84,7 +84,19 @@ const boardReducer = (state, action) => {
                     lastCoordinates: null,
                 }
             }
-            
+            case BOARD_ACTIONS.ERASING: {
+                const { clientX, clientY } = action.payload;
+                const newElements = state.elements.filter(element => {
+                    return !isPointInElement(element, clientX, clientY);
+                });
+                return {
+                    ...state,
+                    elements: newElements,
+                    toolActionsTypes: TOOL_ACTIONS_TYPES.ERASING,
+                    lastCoordinates: { clientX, clientY },
+                };
+            }
+
         default:
             return state;
     }
@@ -102,6 +114,16 @@ function BoardProvider({ children }) {
     const [boardState, dispatchBoardAction] = useReducer(boardReducer, initialBoardState);
 
     const boardMouseDownEventHandler = (clientX, clientY, toolboxState) => {
+        if(boardState.activeTool === TOOL_ITEMS.ERASER) {
+            dispatchBoardAction({ 
+                type: BOARD_ACTIONS.ERASING,
+                payload: {
+                    clientX,
+                    clientY,
+                },
+            });
+            return;
+        }
         dispatchBoardAction({ 
             type: BOARD_ACTIONS.DRAW_DONE, 
             payload: {
@@ -115,16 +137,28 @@ function BoardProvider({ children }) {
     }
 
     const boardMouseMoveEventHandler = (clientX, clientY, toolboxState) => {
-        dispatchBoardAction({ 
-            type: BOARD_ACTIONS.DRAW_MOVE,
-            payload: {
-                clientX,
-                clientY,
-                stroke: toolboxState[boardState.activeTool]?.stroke,
-                fill: toolboxState[boardState.activeTool]?.fill,
-                size: toolboxState[boardState.activeTool]?.size,
-            },
-        });
+        if(boardState.toolActionsTypes === TOOL_ACTIONS_TYPES.DRAWING) {
+                dispatchBoardAction({ 
+                type: BOARD_ACTIONS.DRAW_MOVE,
+                payload: {
+                    clientX,
+                    clientY,
+                    stroke: toolboxState[boardState.activeTool]?.stroke,
+                    fill: toolboxState[boardState.activeTool]?.fill,
+                    size: toolboxState[boardState.activeTool]?.size,
+                },
+            });
+        }
+        else if(boardState.toolActionsTypes === TOOL_ACTIONS_TYPES.ERASING) {
+            dispatchBoardAction({ 
+                type: BOARD_ACTIONS.ERASING,
+                payload: {
+                    clientX,
+                    clientY,
+                },
+            });
+        }
+        
     }
 
     const boardMouseUpEventHandler = () => {

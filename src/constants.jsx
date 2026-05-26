@@ -1,4 +1,4 @@
-import {Slash, Square, Circle, MoveRight, Brush} from 'lucide-react';
+import {Slash, Square, Circle, MoveRight, Brush, Eraser } from 'lucide-react';
 
 const TOOL_ITEMS = {
     Line: Slash,
@@ -6,11 +6,13 @@ const TOOL_ITEMS = {
     Circle: Circle,
     ARROW: MoveRight,
     BRUSH: Brush,
+    ERASER: Eraser,
 };
 
 export const TOOL_ACTIONS_TYPES = {
    NONE: 'NONE',
    DRAWING: 'DRAWING',
+   ERASING: 'ERASING',
 }
 
 export const BOARD_ACTIONS = {
@@ -18,6 +20,7 @@ export const BOARD_ACTIONS = {
     DRAW_DONE: 'DRAW_DONE',
     DRAW_MOVE: 'DRAW_MOVE',
     DRAW_UP: 'DRAW_UP',
+    ERASING: 'ERASING',
 }
 
 export const COLORS = {

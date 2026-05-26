@@ -82,6 +82,36 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
     return element;
 }
 
+export const isPointInElement = (element, pointX, pointY) => {
+    const context = document.getElementById('canvas').getContext('2d');
+    switch(element.type) {
+        case TOOL_ITEMS.Line:
+        case TOOL_ITEMS.ARROW:
+            return isPointCloseToLine(element.x1, element.y1, element.x2, element.y2, pointX, pointY);
+        case TOOL_ITEMS.Box:
+        case TOOL_ITEMS.Circle: 
+            return isPointCloseToLine(element.x1, element.y1, element.x2, element.y1, pointX, pointY) ||
+                   isPointCloseToLine(element.x2, element.y1, element.x2, element.y2, pointX, pointY) ||
+                   isPointCloseToLine(element.x2, element.y2, element.x1, element.y2, pointX, pointY) ||
+                   isPointCloseToLine(element.x1, element.y2, element.x1, element.y1, pointX, pointY);
+
+        case TOOL_ITEMS.BRUSH:
+            return context.isPointInPath(element.path, pointX, pointY); 
+        default:
+            throw new Error('Type not recognized: ' + element.type);
+    }
+}
+
+const isPointCloseToLine = (x1, y1, x2, y2, pointX, pointY, size = 1) => {
+    const distance = Math.abs((y2 - y1) * pointX - (x2 - x1) * pointY + x2 * y1 - y2 * x1) / Math.hypot(y2 - y1, x2 - x1);
+    return distance <= Math.max(thresholdValue.LINE, size * 2.5);
+}
+
+export const thresholdValue = {
+    LINE: 6,
+    ARROW: 6,
+}
+
 export const getSvgPathFromStroke = (stroke) => {
   if (!stroke.length) return "";
 

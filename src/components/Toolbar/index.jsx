@@ -45,6 +45,13 @@ const Toolbar = () => {
                     <TOOL_ITEMS.ARROW size={24} />
                </div>
 
+               <div className ={cx(classes.toolItem, {
+                [classes.active]: activeTool === TOOL_ITEMS.ERASER
+                   })} onClick={() => handleToolItemClick(TOOL_ITEMS.ERASER)}>
+
+                    <TOOL_ITEMS.ERASER size={24} />
+               </div>
+
             </div>
         </>
     )
