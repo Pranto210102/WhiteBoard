@@ -6,10 +6,21 @@ import TOOL_ITEMS from '../../constants'
 import { TOOL_TYPES } from '../../constants'
 import BoardContext from '../store/board-context';
 
-import { Undo2, Redo2 } from 'lucide-react';
+import { Undo2, Redo2, Download } from 'lucide-react';
 
 const Toolbar = () => {
     const { activeTool, handleToolItemClick, undo, redo } = useContext(BoardContext);
+
+    const handleDownloadClick = () => {
+        const canvas = document.getElementById('canvas');
+        if (!canvas) return;
+        const imageURL = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = imageURL;
+        link.download = 'whiteboard.png';
+        link.click();
+    }
+    
     return (
         <>
             <div className={classes.container}>
@@ -69,7 +80,12 @@ const Toolbar = () => {
                    <Redo2 size={24} />
                </div>
 
+                <div className={classes.toolItem} onClick={handleDownloadClick}>
+                   <Download size={24} />
+               </div>
+
             </div>
+            
         </>
     )
 }

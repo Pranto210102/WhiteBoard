@@ -106,7 +106,7 @@ export const isPointInElement = (element, pointX, pointY) => {
             context.font = `${element.size}px Caveat`;
             const metrics = context.measureText(element.text || '');
             const textWidth = metrics.width;
-            const textHeight = element.size; // approximate
+            const textHeight = element.size;
             return (
                 pointX >= element.x1 &&
                 pointX <= element.x1 + textWidth &&

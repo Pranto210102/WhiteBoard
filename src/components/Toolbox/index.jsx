@@ -19,6 +19,14 @@ function Toolbox() {
             {STROKE_TOOL_TYPES.includes(activeTool) &&<div className={classes.selectOptionContainer}>
                 <div className={classes.toolBoxLabel}>Stroke</div>
                 <div className={classes.colorsContainer}>
+                    <div >
+                    <input
+                        className={classes.colorPicker}
+                        type="color"
+                        value={strokeColor}
+                        onChange={(event) => changeStroke(activeTool, event.target.value)}
+                    />
+                    </div>
                    {Object.keys(COLORS).map((k) => {
                          return (
                             <div 
@@ -38,6 +46,28 @@ function Toolbox() {
             {FILL_TOOL_TYPES.includes(activeTool) && <div className={classes.selectOptionContainer}>
                 <div className={classes.toolBoxLabel}>Fill Color</div>
                 <div className={classes.colorsContainer}>
+                    {
+                        fillColor === null ? <div
+                        className={cx(classes.colorPicker, classes.noFillColorBox)}
+                        onClick={() => changeFillColor(activeTool, COLORS.BLACK)}
+                        /> :
+                        <div >
+                        <input
+                                className={classes.colorPicker}
+                                type="color"
+                                value={fillColor}
+                                onChange={(event) => changeFillColor(activeTool, event.target.value)}
+                            />
+                            </div>
+                    }
+
+                    <div
+                        className={cx(classes.colorBox, {
+                            [classes.activeColorBox]: fillColor === null
+                        }, classes.noFillColorBox)}
+                        onClick={() => changeFillColor(activeTool, null)}
+                    />
+
                    {Object.keys(COLORS).map((k) => {
                         return (
                             <div 
