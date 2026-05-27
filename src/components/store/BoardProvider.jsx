@@ -81,13 +81,6 @@ const boardReducer = (state, action) => {
                    } 
             }
 
-            case BOARD_ACTIONS.DRAW_UP: {
-                return {
-                    ...state,
-                    toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
-                    lastCoordinates: null,
-                }
-            }
             case BOARD_ACTIONS.ERASING: {
                 const { clientX, clientY } = action.payload;
                 const newElements = state.elements.filter(element => {
@@ -115,10 +108,44 @@ const boardReducer = (state, action) => {
                 const newElements = [...state.elements];
                 if (newElements[index]) newElements[index].text = action.payload.text;
 
+                const newHistory = state.history.slice(0, state.index + 1);
+                newHistory.push(newElements);
                 return {
                     ...state,
                     elements: newElements,
                     toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
+                    history: newHistory,
+                    index: state.index + 1,
+                }
+            }
+            case BOARD_ACTIONS.DRAW_UP: {
+                const newElements = [...state.elements];
+                const newHistory = state.history.slice(0, state.index + 1);
+                newHistory.push(newElements);
+                return {
+                    ...state,
+                    toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
+                    lastCoordinates: null,
+                    history: newHistory,
+                    index: state.index + 1,
+                }
+            }
+            case BOARD_ACTIONS.UNDO: {
+                if(state.index <= 0) return state;
+                return {
+                    ...state,
+                    elements: state.history[state.index - 1],
+                    toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
+                    index: state.index - 1,
+                }
+            }
+            case BOARD_ACTIONS.REDO: {
+                if(state.index >= state.history.length - 1) return state;
+                return {
+                    ...state,
+                    elements: state.history[state.index + 1],
+                    toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
+                    index: state.index + 1,
                 }
             }
 
@@ -132,6 +159,8 @@ const initialBoardState = {
     activeTool: TOOL_TYPES.BRUSH,
     toolActionsTypes: TOOL_ACTIONS_TYPES.NONE,
     elements: [],
+    history: [[]],
+    index: 0,
     lastCoordinates: null,
 }
 
@@ -190,10 +219,11 @@ function BoardProvider({ children }) {
 
     const boardMouseUpEventHandler = () => {
         if(boardState.toolActionsTypes === TOOL_ACTIONS_TYPES.WRITING) return;
-
-        dispatchBoardAction({ 
-            type: BOARD_ACTIONS.DRAW_UP,
-        });
+        if(boardState.toolActionsTypes === TOOL_ACTIONS_TYPES.DRAWING || boardState.toolActionsTypes === TOOL_ACTIONS_TYPES.ERASING) {
+            dispatchBoardAction({ 
+                type: BOARD_ACTIONS.DRAW_UP,
+            });
+        }
     }
 
     const handleToolItemClick = (tool) => {
@@ -219,6 +249,18 @@ function BoardProvider({ children }) {
         });
     }
 
+    const boardUndoHandler = () => {
+        dispatchBoardAction({
+            type: BOARD_ACTIONS.UNDO,
+        });
+    }
+
+    const boardRedoHandler = () => {
+        dispatchBoardAction({
+            type: BOARD_ACTIONS.REDO,
+        });
+    }
+
     const BoardContextValue = {
         activeTool: boardState.activeTool,
         toolActionsTypes: boardState.toolActionsTypes,
@@ -230,6 +272,8 @@ function BoardProvider({ children }) {
         textAreaChangeHandler,
         elements: boardState.elements,
         lastCoordinates: boardState.lastCoordinates,
+        undo: boardUndoHandler,
+        redo: boardRedoHandler,
     }
     
   return (

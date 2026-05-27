@@ -36,6 +36,8 @@ export const BOARD_ACTIONS = {
     WRITING: 'WRITING',
     CHANGE_TEXT: 'CHANGE_TEXT',
     UPDATE_TEXT: 'UPDATE_TEXT',
+    UNDO: 'UNDO',
+    REDO: 'REDO',
 }
 
 export const COLORS = {

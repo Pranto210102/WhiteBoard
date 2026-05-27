@@ -6,8 +6,10 @@ import TOOL_ITEMS from '../../constants'
 import { TOOL_TYPES } from '../../constants'
 import BoardContext from '../store/board-context';
 
+import { Undo2, Redo2 } from 'lucide-react';
+
 const Toolbar = () => {
-    const { activeTool, handleToolItemClick } = useContext(BoardContext);
+    const { activeTool, handleToolItemClick, undo, redo } = useContext(BoardContext);
     return (
         <>
             <div className={classes.container}>
@@ -58,6 +60,13 @@ const Toolbar = () => {
                          })} onClick={() => handleToolItemClick(TOOL_TYPES.TEXT)}>
 
                     <TOOL_ITEMS.TEXT size={24} />
+               </div>
+
+               <div className={classes.toolItem} onClick={undo}>
+                   <Undo2 size={24} />
+               </div>
+               <div className={classes.toolItem} onClick={redo}>
+                   <Redo2 size={24} />
                </div>
 
             </div>
