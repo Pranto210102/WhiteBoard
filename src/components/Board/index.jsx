@@ -15,6 +15,8 @@ const Board = () => {
         toolActionsTypes,
         textAreaBlurHandler,
         textAreaChangeHandler,
+        undo,
+        redo,
         boardMouseUpEventHandler } = useContext(BoardContext);
     const { toolboxState } = useContext(toolboxContext);
 
@@ -79,6 +81,21 @@ const Board = () => {
             }, 0); 
         }
     }, [toolActionsTypes])
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'z') {   
+                undo();
+            }
+            if (event.ctrlKey && event.key === 'y') {
+                redo();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [undo, redo])
 
     const handleMouseDownEvent = (event) => {
         const {clientX, clientY} = event;

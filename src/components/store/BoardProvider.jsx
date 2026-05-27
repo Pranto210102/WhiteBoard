@@ -1,6 +1,6 @@
 import BoardContext from "./board-context";
 import React from 'react'
-import { useState, useReducer, useContext } from "react";
+import { useState, useReducer, useContext, useCallback } from "react";
 import TOOL_ITEMS, { BOARD_ACTIONS, TOOL_ACTIONS_TYPES, TOOL_TYPES} from "../../constants";
 import { getStroke } from 'perfect-freehand';
 
@@ -249,17 +249,17 @@ function BoardProvider({ children }) {
         });
     }
 
-    const boardUndoHandler = () => {
+    const boardUndoHandler = useCallback(() => {
         dispatchBoardAction({
             type: BOARD_ACTIONS.UNDO,
         });
-    }
+    }, []);
 
-    const boardRedoHandler = () => {
+    const boardRedoHandler = useCallback(() => {
         dispatchBoardAction({
             type: BOARD_ACTIONS.REDO,
         });
-    }
+    }, []);
 
     const BoardContextValue = {
         activeTool: boardState.activeTool,
