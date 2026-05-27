@@ -1,7 +1,7 @@
 import {useReducer} from 'react';
 import ToolboxContext from './toolbox-context';
 import React from 'react'
-import TOOL_ITEMS, {COLORS, TOOLBOX_ACTIONS} from '../../constants';
+import TOOL_ITEMS, {COLORS, TOOLBOX_ACTIONS, TOOL_TYPES} from '../../constants';
 
 function toolboxReducer(state, action) {
     switch(action.type) {
@@ -30,29 +30,33 @@ function toolboxReducer(state, action) {
 
 function initialState() {
     return {
-        [TOOL_ITEMS.BRUSH]: {
+        [TOOL_TYPES.BRUSH]: {
             stroke: COLORS.BLACK,
             size: 1,
         },
-        [TOOL_ITEMS.Line]: {
+        [TOOL_TYPES.LINE]: {
             stroke: COLORS.BLACK,
             size: 1,
         },
 
-        [TOOL_ITEMS.Box]: {
+        [TOOL_TYPES.BOX]: {
             stroke: COLORS.BLACK,
             fill: null,
             size: 1,
         },
 
-        [TOOL_ITEMS.Circle]: {
+        [TOOL_TYPES.CIRCLE]: {
             stroke: COLORS.BLACK,
             fill: null,
             size: 1,
         },
-        [TOOL_ITEMS.ARROW]: {
+        [TOOL_TYPES.ARROW]: {
             stroke: COLORS.BLACK,
             size: 1,
+        },
+        [TOOL_TYPES.TEXT]: {
+            stroke: COLORS.BLACK,
+            size: 16,
         }
     };
 }

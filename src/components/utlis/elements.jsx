@@ -1,11 +1,12 @@
 import TOOL_ITEMS, {ARROW_HEAD_LENGTH} from "../../constants";
+import { TOOL_TYPES } from "../../constants";
 import rough from 'roughjs/bin/rough';
 import { arrowHeadCoordinates } from "./math";
 import {getStroke} from 'perfect-freehand';
 
 const gen = rough.generator();
 
-export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size}) => {
+export const createElement = (id, x1, y1, x2, y2, {type, stroke, fill, size}) => {
     const element = {
         id,
         x1,
@@ -33,7 +34,7 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
     }
 
     switch(type) {
-        case TOOL_ITEMS.BRUSH: {
+        case TOOL_TYPES.BRUSH: {
             const points = [[x1, y1]];
             const brushElement = {
                 id,
@@ -45,13 +46,13 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
             return brushElement;
         }
         
-        case TOOL_ITEMS.Line:
+        case TOOL_TYPES.LINE:
             element.roughElement = gen.line(x1, y1, x2, y2, options);
             break;
-        case TOOL_ITEMS.Box:
+        case TOOL_TYPES.BOX:
             element.roughElement = gen.rectangle(x1, y1, x2 - x1, y2 - y1, options);
             break;
-        case TOOL_ITEMS.Circle: {
+        case TOOL_TYPES.CIRCLE: {
             const cx = (x1 + x2) / 2;
             const cy = (y1 + y2) / 2;
             const width = x2 - x1;
@@ -59,7 +60,7 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
             element.roughElement = gen.ellipse(cx, cy, width, height, options);
             break;
         }
-        case TOOL_ITEMS.ARROW: {
+        case TOOL_TYPES.ARROW: {
             const arrowLineLength = Math.hypot(x2 - x1, y2 - y1);
             if(arrowLineLength <= 2) {
                 element.roughElement = gen.line(x1, y1, x2, y2, options);
@@ -76,6 +77,9 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
             element.roughElement = gen.linearPath(points, options);
             break;
         }
+        case TOOL_TYPES.TEXT: 
+             element.text = "";
+             return element;
         default:
             throw new Error('Type not recognized: ');
     }
@@ -85,18 +89,31 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type, stroke, fill, size
 export const isPointInElement = (element, pointX, pointY) => {
     const context = document.getElementById('canvas').getContext('2d');
     switch(element.type) {
-        case TOOL_ITEMS.Line:
-        case TOOL_ITEMS.ARROW:
+        case TOOL_TYPES.LINE:
+        case TOOL_TYPES.ARROW:
             return isPointCloseToLine(element.x1, element.y1, element.x2, element.y2, pointX, pointY);
-        case TOOL_ITEMS.Box:
-        case TOOL_ITEMS.Circle: 
+        case TOOL_TYPES.BOX:
+        case TOOL_TYPES.CIRCLE: 
             return isPointCloseToLine(element.x1, element.y1, element.x2, element.y1, pointX, pointY) ||
                    isPointCloseToLine(element.x2, element.y1, element.x2, element.y2, pointX, pointY) ||
                    isPointCloseToLine(element.x2, element.y2, element.x1, element.y2, pointX, pointY) ||
                    isPointCloseToLine(element.x1, element.y2, element.x1, element.y1, pointX, pointY);
 
-        case TOOL_ITEMS.BRUSH:
+        case TOOL_TYPES.BRUSH:
             return context.isPointInPath(element.path, pointX, pointY); 
+        case TOOL_TYPES.TEXT: {
+            if (!element.text) return false;
+            context.font = `${element.size}px Caveat`;
+            const metrics = context.measureText(element.text || '');
+            const textWidth = metrics.width;
+            const textHeight = element.size; // approximate
+            return (
+                pointX >= element.x1 &&
+                pointX <= element.x1 + textWidth &&
+                pointY >= element.y1 &&
+                pointY <= element.y1 + textHeight
+            );
+        }
         default:
             throw new Error('Type not recognized: ' + element.type);
     }
